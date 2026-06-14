@@ -1,6 +1,6 @@
 const Application = require("../models/Application");
 
-// ✅ CREATE
+//  CREATE
 const createApplication = async (req, res) => {
   try {
     const newApp = new Application(req.body);
@@ -11,7 +11,7 @@ const createApplication = async (req, res) => {
   }
 };
 
-// ✅ GET ALL
+// GET ALL
 const getApplications = async (req, res) => {
   try {
     const apps = await Application.find().sort({ createdAt: -1 });
@@ -21,7 +21,7 @@ const getApplications = async (req, res) => {
   }
 };
 
-// ✅ UPDATE
+// UPDATE
 const updateApplication = async (req, res) => {
   try {
     const updated = await Application.findByIdAndUpdate(
@@ -35,7 +35,7 @@ const updateApplication = async (req, res) => {
   }
 };
 
-// ✅ DELETE
+// DELETE
 const deleteApplication = async (req, res) => {
   try {
     await Application.findByIdAndDelete(req.params.id);

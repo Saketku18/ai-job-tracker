@@ -21,16 +21,21 @@ const useStore = create((set, get) => ({
     return user
   },
 
-  logout: () => {
-    localStorage.removeItem('user')
-    set({ user: null, applications: [] })
-  },
+  logout: async () => {
+   const user =
+      JSON.parse(localStorage.getItem("user"));
 
-  // Applications
-  applications: [],
-  loading: false,
-  error: null,
+   await api.post("/auth/logout", {
+      refreshToken: user.refreshToken
+   });
 
+   localStorage.removeItem("user");
+
+   set({
+      user: null,
+      applications: []
+   });
+},
   fetchApplications: async () => {
     set({ loading: true, error: null })
     try {
