@@ -1,0 +1,9 @@
+venv
+__pycache__
+*.pyc
+.env
+resume.pdf
+resume.hash
+faiss_index
+.git
+*.md
