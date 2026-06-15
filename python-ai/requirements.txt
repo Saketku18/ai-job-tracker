@@ -9,4 +9,7 @@ pypdf
 langchain-community
 python-multipart
 sentence-transformers
+transformers
 torch
+langchain-huggingface
+faiss-cpu
