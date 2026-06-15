@@ -8,7 +8,7 @@ const uploadResume = async (req, res) => {
     formData.append("file", req.file.buffer, "resume.pdf");
 
     const response = await axios.post(
-      "http://localhost:8000/upload-resume",
+      "https://ai-job-tracker-s5x2.onrender.com/upload-resume",
       formData,
       { headers: formData.getHeaders() }
     );
@@ -23,7 +23,7 @@ const uploadResume = async (req, res) => {
 const extractJob = async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/extract",
+      "https://ai-job-tracker-s5x2.onrender.com/extract",
       { job_description: req.body.text }
     );
 
@@ -37,7 +37,7 @@ const extractJob = async (req, res) => {
 const matchResume = async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/match"
+      "https://ai-job-tracker-s5x2.onrender.com/match"
     );
 
     res.json(response.data);
@@ -50,7 +50,7 @@ const matchResume = async (req, res) => {
 const getAdvice = async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/advise"
+      "https://ai-job-tracker-s5x2.onrender.com/advise"
     );
 
     res.json(response.data);
