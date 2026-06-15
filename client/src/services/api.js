@@ -1,8 +1,8 @@
 import axios from "axios"
 
 const API = axios.create({
-  baseURL: "https://jobtrack-backend-lc3f.onrender.com",
-})
+ baseURL: "https://jobtrack-backend-lc3f.onrender.com/api",}
+)
 
 API.interceptors.request.use((config) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}")
@@ -22,16 +22,6 @@ API.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-export const uploadResume = (formData) =>
-  API.post("/ai/upload", formData);
 
-export const extractJob = (text) =>
-  API.post("/ai/extract", { text });
-
-export const matchResume = () =>
-  API.post("/ai/match");
-
-export const getAdvice = () =>
-  API.post("/ai/advise");
 
 export default API

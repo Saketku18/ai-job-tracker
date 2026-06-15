@@ -9,36 +9,81 @@ function AIAnalyzer() {
   const [loading, setLoading] = useState("")
 
   const handleUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const formData = new FormData()
-    formData.append("file", file)
-    setLoading("upload")
-    await API.post("http://localhost:8000/upload-resume", formData)
-    setLoading("")
-    alert("Resume uploaded!")
-  }
+  const file = e.target.files[0];
+  if (!file) return;
 
-  const handleExtract = async () => {
-    setLoading("extract")
-    const res = await API.post("http://localhost:8000/extract", { job_description: jd })
-    setResult({ type: "extract", data: res.data.data })
-    setLoading("")
-  }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const handleMatch = async () => {
-    setLoading("match")
-    const res = await API.post("http://localhost:8000/match", { job_description: jd })
-    setResult({ type: "match", data: res.data.data })
-    setLoading("")
-  }
+  try {
+    setLoading("upload");
 
-  const handleAdvice = async () => {
-    setLoading("advice")
-    const res = await API.post("http://localhost:8000/advise", { job_description: jd })
-    setResult({ type: "advice", data: res.data.data })
-    setLoading("")
+    await API.post("/ai/upload", formData);
+
+    alert("Resume uploaded!");
+  } catch (err) {
+    console.error(err);
+    alert("Upload failed");
+  } finally {
+    setLoading("");
   }
+};
+
+const handleExtract = async () => {
+  try {
+    setLoading("extract");
+
+    const res = await API.post("/ai/extract", {
+      text: jd,
+    });
+
+    setResult({
+      type: "extract",
+      data: res.data.data,
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Extract failed");
+  } finally {
+    setLoading("");
+  }
+};
+
+const handleMatch = async () => {
+  try {
+    setLoading("match");
+
+    const res = await API.post("/ai/match");
+
+    setResult({
+      type: "match",
+      data: res.data.data,
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Match failed");
+  } finally {
+    setLoading("");
+  }
+};
+
+const handleAdvice = async () => {
+  try {
+    setLoading("advice");
+
+    const res = await API.post("/ai/advise");
+
+    setResult({
+      type: "advice",
+      data: res.data.data,
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Advice failed");
+  } finally {
+    setLoading("");
+  }
+};
 
   return (
     <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>

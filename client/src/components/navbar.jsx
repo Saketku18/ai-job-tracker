@@ -7,10 +7,18 @@ function Navbar({ total }) {
     ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : "U"
 
-  const handleLogout = () => {
-    localStorage.removeItem("user")
-    navigate("/login")
-  }
+  const handleLogout = async () => {
+  const user = JSON.parse(localStorage.getItem("user"))
+
+  try {
+    await API.post("/auth/logout", {
+      refreshToken: user?.refreshToken,
+    })
+  } catch (err) {}
+
+  localStorage.removeItem("user")
+  navigate("/login")
+}
 
   return (
     <nav style={styles.nav}>
