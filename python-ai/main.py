@@ -50,6 +50,29 @@ def upload_resume(file: UploadFile = File(...)):
     except Exception as e:
         print("UPLOAD ERROR:", str(e))
         return {"error": str(e)}
+    
+
+    @app.post("/extract")
+def extract(data: dict):
+
+    import json
+
+    jd = data["text"]
+
+    jd = jd.replace("–", "-").replace("—", "-")
+    jd = jd.encode("ascii", "ignore").decode()
+
+    job_data = extract_job(jd)
+
+    with open("job.json", "w") as f:
+        json.dump(job_data, f)
+
+    print("✅ JOB STORED:", job_data)
+
+    return {
+        "success": True,
+        "data": job_data
+    }
 # Match Resume
 # ===============================
 @app.post("/match")
@@ -103,24 +126,3 @@ def advise():
     )
 
     return {"success": True, "data": advice}
-@app.post("/extract")
-def extract(data: dict):
-
-    import json
-
-    jd = data["job_description"]
-
-    jd = jd.replace("–", "-").replace("—", "-")
-    jd = jd.encode("ascii", "ignore").decode()
-
-    job_data = extract_job(jd)
-
-    with open("job.json", "w") as f:
-        json.dump(job_data, f)
-
-    print("✅ JOB STORED:", job_data)
-
-    return {
-        "success": True,
-        "data": job_data
-    }
