@@ -39,8 +39,8 @@ def upload_resume(file: UploadFile = File(...)):
             [doc.page_content for doc in documents]
         )
 
-        resume_context_store.clear()
-        resume_context_store["resume"] = resume_text
+        with open("resume.txt", "w", encoding="utf-8") as f:
+            f.write(resume_text)
 
         return {
             "success": True,
@@ -55,8 +55,13 @@ def upload_resume(file: UploadFile = File(...)):
 @app.post("/match")
 def match():
 
-    resume_text = resume_context_store.get("resume")
-    job_data = job_data_store.get("job")
+    import json
+
+    with open("resume.txt", "r", encoding="utf-8") as f:
+        resume_text = f.read()
+
+    with open("job.json", "r") as f:
+        job_data = json.load(f)
 
     if not resume_text:
         return {"error": "Resume not uploaded"}
@@ -76,8 +81,13 @@ def match():
 @app.post("/advise")
 def advise():
 
-    resume_text = resume_context_store.get("resume")
-    job_data = job_data_store.get("job")
+    import json
+
+    with open("resume.txt", "r", encoding="utf-8") as f:
+        resume_text = f.read()
+
+    with open("job.json", "r") as f:
+        job_data = json.load(f)
 
     if not resume_text or not job_data:
         return {"error": "Missing data"}
@@ -98,7 +108,10 @@ def extract(data: dict):
 
     jd = data["job_description"]
 
-    job_data = extract_job(jd)
+    import json
+
+    with open("job.json", "w") as f: 
+        json.dump(job_data, f)
 
     job_data_store["job"] = job_data
 
