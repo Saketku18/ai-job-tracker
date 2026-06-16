@@ -4,7 +4,7 @@ import shutil
 
 load_dotenv()
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 FAISS_PATH = "faiss_index"
@@ -18,7 +18,8 @@ def get_embeddings():
     print("🔎 Loading embeddings model...")
 
     embedding = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    model_kwargs={"device": "cpu"}
 )
 
     print("✅ Embeddings Ready")
@@ -51,6 +52,7 @@ def build_vectorstore(docs):
         docs,
         embedding
     )
+    print("before faiss")
 
     vectorstore.save_local(FAISS_PATH)
 

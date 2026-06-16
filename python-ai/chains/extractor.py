@@ -55,11 +55,13 @@ def extract_job(job_description: str) -> dict:
         })
         return result.dict()
     except Exception as e:
-        # Retry with cleaned text
-        cleaned = job_description.replace("–", "-").replace("—", "-")
-        cleaned = cleaned.encode("ascii", "ignore").decode() 
-        result = chain.invoke({
-            "job_description": cleaned,
-            "format_instructions": parser.get_format_instructions()
-        })
-        return result.dict()
+        print("EXTRACT ERROR:", e)
+
+        return {
+            "role": None,
+            "company": None,
+            "location": None,
+            "skills": [],
+            "experience": None,
+            "salary": None
+        }
