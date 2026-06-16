@@ -93,3 +93,18 @@ def advise():
     )
 
     return {"success": True, "data": advice}
+@app.post("/extract")
+def extract(data: dict):
+
+    jd = data["job_description"]
+
+    job_data = extract_job(jd)
+
+    job_data_store["job"] = job_data
+
+    print("✅ JOB STORED:", job_data)
+
+    return {
+        "success": True,
+        "data": job_data
+    }
