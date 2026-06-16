@@ -14,18 +14,21 @@ FAISS_PATH = "faiss_index"
 # Embeddings
 # ===============================
 def get_embeddings():
+    try:
+        print("🔎 Loading embeddings model...")
 
-    print("🔎 Loading embeddings model...")
+        embedding = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_kwargs={"device": "cpu"}
+        )
 
-    embedding = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2",
-    model_kwargs={"device": "cpu"}
-)
+        print("✅ Embeddings Ready")
 
-    print("✅ Embeddings Ready")
+        return embedding
 
-    return embedding
-
+    except Exception as e:
+        print("❌ EMBEDDING ERROR:", str(e))
+        raise e
 
 # ===============================
 # Delete FAISS

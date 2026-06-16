@@ -9,7 +9,3 @@ pydantic
 python-dotenv
 python-multipart
 pypdf
-sentence-transformers
-transformers
-torch
-faiss-cpu

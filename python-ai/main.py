@@ -5,7 +5,7 @@ import shutil
 from chains.extractor import extract_job
 from chains.matcher import match_resume
 from chains.advisor import get_advice
-from utils.pdf_reader import get_retriever
+from utils.pdf_reader import load_resume
 
 app = FastAPI()
 app.add_middleware(
@@ -25,24 +25,22 @@ resume_context_store = {}
 # Upload Resume
 # ===============================
 
+
 @app.post("/upload-resume")
 def upload_resume(file: UploadFile = File(...)):
     try:
-        print("STEP A")
 
         with open("resume.pdf", "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        print("STEP B")
+        documents = load_resume("resume.pdf")
 
-        retriever = get_retriever("resume.pdf")
-
-        print("STEP C")
+        resume_text = "\n".join(
+            [doc.page_content for doc in documents]
+        )
 
         resume_context_store.clear()
-        resume_context_store["retriever"] = retriever
-
-        print("STEP D")
+        resume_context_store["resume"] = resume_text
 
         return {
             "success": True,
@@ -51,46 +49,25 @@ def upload_resume(file: UploadFile = File(...)):
 
     except Exception as e:
         print("UPLOAD ERROR:", str(e))
-        raise e
-# ===============================
-# Extract Job
-# ===============================
-@app.post("/extract")
-def extract(data: dict):
-    # Clean special characters
-    jd = data["job_description"]
-
-    jd = jd.replace("–", "-").replace("—", "-")
-
-    jd = jd.encode("ascii", "ignore").decode()
-    job_data = extract_job(jd)
-    job_data_store["job"] = job_data
-
-    print("✅ JOB STORED:", job_data)
-    return {"success": True, "data": job_data}
-# ===============================
+        return {"error": str(e)}
 # Match Resume
 # ===============================
 @app.post("/match")
 def match():
 
-    retriever = resume_context_store.get("retriever")
-    job_data = job_data_store.get("job")   # ✅ ADD THIS
+    resume_text = resume_context_store.get("resume")
+    job_data = job_data_store.get("job")
 
-    # safety check
-    if not retriever:
+    if not resume_text:
         return {"error": "Resume not uploaded"}
 
     if not job_data:
         return {"error": "Job not extracted"}
 
-    query = ", ".join(job_data["skills"])
-
-    docs = retriever.invoke(query)
-
-    context = "\n".join([doc.page_content for doc in docs])
-
-    result = match_resume(context, job_data)
+    result = match_resume(
+        resume_text,
+        job_data
+    )
 
     return {"success": True, "data": result}
 # ===============================
@@ -99,19 +76,20 @@ def match():
 @app.post("/advise")
 def advise():
 
-    retriever = resume_context_store.get("retriever")
+    resume_text = resume_context_store.get("resume")
     job_data = job_data_store.get("job")
 
-    if not retriever or not job_data:
+    if not resume_text or not job_data:
         return {"error": "Missing data"}
 
-    query = ", ".join(job_data["skills"])
-    docs = retriever.invoke(query)
+    match_result = match_resume(
+        resume_text,
+        job_data
+    )
 
-    context = "\n".join([doc.page_content for doc in docs])
-
-    match_result = match_resume(context, job_data)
-
-    advice = get_advice(match_result, job_data)
+    advice = get_advice(
+        match_result,
+        job_data
+    )
 
     return {"success": True, "data": advice}
