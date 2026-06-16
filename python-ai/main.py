@@ -106,14 +106,17 @@ def advise():
 @app.post("/extract")
 def extract(data: dict):
 
-    jd = data["job_description"]
-
     import json
 
-    with open("job.json", "w") as f: 
-        json.dump(job_data, f)
+    jd = data["job_description"]
 
-    job_data_store["job"] = job_data
+    jd = jd.replace("–", "-").replace("—", "-")
+    jd = jd.encode("ascii", "ignore").decode()
+
+    job_data = extract_job(jd)
+
+    with open("job.json", "w") as f:
+        json.dump(job_data, f)
 
     print("✅ JOB STORED:", job_data)
 
