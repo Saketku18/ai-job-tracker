@@ -24,24 +24,34 @@ resume_context_store = {}
 # ===============================
 # Upload Resume
 # ===============================
-@app.post("/upload-resume")
+
 @app.post("/upload-resume")
 def upload_resume(file: UploadFile = File(...)):
+    try:
+        print("STEP A")
 
-    with open("resume.pdf", "wb") as f:
+        with open("resume.pdf", "wb") as f:
+            shutil.copyfileobj(file.file, f)
 
-        shutil.copyfileobj(file.file, f)
+        print("STEP B")
 
-    retriever = get_retriever("resume.pdf")
+        retriever = get_retriever("resume.pdf")
 
-    resume_context_store.clear()
+        print("STEP C")
 
-    resume_context_store["retriever"] = retriever
+        resume_context_store.clear()
+        resume_context_store["retriever"] = retriever
 
-    return {
-        "success": True,
-        "message": "Resume uploaded successfully"
-    }
+        print("STEP D")
+
+        return {
+            "success": True,
+            "message": "Resume uploaded successfully"
+        }
+
+    except Exception as e:
+        print("UPLOAD ERROR:", str(e))
+        raise e
 # ===============================
 # Extract Job
 # ===============================
