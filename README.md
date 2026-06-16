@@ -1,367 +1,169 @@
 # JobTrack — AI Powered Job Application Tracker
 
-A full stack web application to track job applications with an AI powered resume analyzer built using React, Node.js, MongoDB, Python, LangChain, and Groq.
+A full-stack web application to track job applications and analyze resumes using AI. Built with React, Node.js, MongoDB, FastAPI, LangChain, and Groq.
 
----
+## Live Demo
 
-## Project Structure
+Frontend: https://ai-job-tracker-weld.vercel.app
 
-```
-job-tracker/
-├── client/          # React frontend
-├── server/          # Node.js backend
-└── python-ai/       # Python AI microservice
-```
+Backend API: https://jobtrack-backend-lc3f.onrender.com
+
+AI Service: https://ai-job-tracker-s5x2.onrender.com
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- React.js
-- React Router DOM
-- Axios
-- Custom CSS (dark theme)
+
+* React.js
+* React Router DOM
+* Axios
+* Vite
+* Custom Dark UI
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- JWT (Access Token + Refresh Token)
-- bcrypt
+
+* Node.js
+* Express.js
+* MongoDB Atlas
+* Mongoose
+* JWT Authentication
+* bcrypt
 
 ### AI Service
-- Python + FastAPI
-- LangChain
-- Groq (llama-3.1-8b-instant) — free LLM
-- FAISS — vector store for RAG
-- HuggingFace Embeddings
-- Pydantic output parsers
+
+* Python
+* FastAPI
+* LangChain
+* Groq (llama-3.1-8b-instant)
+* Pydantic
+* PyPDF
+
+### Deployment
+
+* Vercel (Frontend)
+* Render (Backend)
+* Render (AI Service)
+* MongoDB Atlas
 
 ---
 
 ## Features
 
 ### Job Tracker
-- Register and login with JWT authentication
-- Add job applications with role, company, location, skills
-- Kanban board with 4 columns — Applied, Interview, Offer, Rejected
-- Move applications between columns by changing status
-- Delete applications
-- Search applications by role or company
-- Stats — Total, Applied, Interviews, Offers
+
+* User Registration & Login
+* JWT Authentication
+* Create Job Applications
+* Update Application Status
+* Delete Applications
+* Search Jobs
+* Application Statistics
+* Kanban Workflow
 
 ### AI Resume Analyzer
-- Upload resume PDF
-- Paste job description
-- Extract structured data from job description using AI
-- Match resume against job description using RAG pipeline
-- Get career advice — should apply or not
+
+* Upload Resume PDF
+* Extract Structured Job Data
+* Resume vs Job Matching
+* Missing Skills Detection
+* Strength Analysis
+* AI Career Advice
+* Apply / Not Apply Recommendation
 
 ---
 
-## AI Architecture
+## AI Workflow
 
-```
-React Frontend
-      ↓
-Node.js Backend (port 5000)
-      ↓
-Python FastAPI AI Service (port 8000)
-      ↓
-Groq LLM — llama-3.1-8b-instant
-      ↓
-FAISS Vector Store (RAG)
-```
-
-### AI Endpoints
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| POST | /upload-resume | Upload resume PDF |
-| POST | /extract | Extract job data from JD |
-| POST | /match | Match resume with JD |
-| POST | /advise | Get career advice |
+Resume Upload
+↓
+PDF Text Extraction
+↓
+Store Resume Context
+↓
+Job Description Extraction
+↓
+AI Skill Matching
+↓
+Match Score Generation
+↓
+Career Advice
 
 ---
 
-## Getting Started
+## AI Endpoints
 
-### Prerequisites
-
-- Node.js v18+
-- Python 3.10+
-- MongoDB Atlas account
-- Groq API key (free at console.groq.com)
-
----
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/job-tracker.git
-cd job-tracker
-```
+| Method | Endpoint       | Description            |
+| ------ | -------------- | ---------------------- |
+| POST   | /upload-resume | Upload Resume PDF      |
+| POST   | /extract       | Extract Job Data       |
+| POST   | /match         | Analyze Resume Match   |
+| POST   | /advise        | Generate Career Advice |
 
 ---
 
-### 2. Setup Backend
+## Project Structure
 
-```bash
-cd server
-npm install
-```
+job-tracker/
 
-Create `.env` file in `server/`:
+client/ → React Frontend
 
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-```
+server/ → Node Backend
 
-Run backend:
-
-```bash
-npm run dev
-```
-
----
-
-### 3. Setup Frontend
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-Frontend runs on `http://localhost:5173`
-
----
-
-### 4. Setup Python AI Service
-
-```bash
-cd python-ai
-python -m venv venv
-venv\Scripts\activate       # Windows
-source venv/bin/activate    # Mac/Linux
-```
-
-Install packages:
-
-```bash
-pip install fastapi uvicorn langchain langchain-groq langchain-community langchain-text-splitters langchain-core faiss-cpu sentence-transformers pypdf pydantic python-dotenv
-```
-
-Create `.env` file in `python-ai/`:
-
-```
-GROQ_API_KEY=your_groq_api_key
-```
-
-Run AI service:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-AI service runs on `http://localhost:8000`
-
----
-
-### 5. MongoDB Atlas Setup
-
-1. Go to MongoDB Atlas
-2. Create a cluster
-3. Get connection string
-4. Go to Network Access → Add IP → Allow from anywhere (0.0.0.0/0)
-5. Paste connection string in server `.env`
-
----
-
-## Running the Full Project
-
-Open 3 terminals:
-
-```bash
-# Terminal 1 — Backend
-cd server
-npm run dev
-
-# Terminal 2 — Frontend
-cd client
-npm run dev
-
-# Terminal 3 — AI Service
-cd python-ai
-venv\Scripts\activate
-uvicorn main:app --reload --port 8000
-```
-
-Then open `http://localhost:5173` in browser.
-
----
-
-## Folder Structure
-
-### Backend
-```
-server/
-├── config/
-│   └── db.js
-├── controllers/
-│   ├── auth.controller.js
-│   ├── application.controller.js
-│   └── ai.controller.js
-├── models/
-│   ├── User.js
-│   └── Application.js
-├── routes/
-│   ├── auth.routes.js
-│   ├── application.routes.js
-│   └── ai.routes.js
-├── middleware/
-│   └── auth.middleware.js
-├── ai/
-│   ├── extractor.js
-│   └── prompts.js
-├── app.js
-└── server.js
-```
-
-### Frontend
-```
-client/
-└── src/
-    ├── components/
-    │   ├── Navbar.jsx
-    │   ├── KanbanBoard.jsx
-    │   ├── ApplicationCard.jsx
-    │   └── AddApplicationModal.jsx
-    ├── pages/
-    │   ├── Login.jsx
-    │   ├── Register.jsx
-    │   ├── Dashboard.jsx
-    │   └── AIAnalyzer.jsx
-    ├── services/
-    │   └── api.js
-    └── App.jsx
-```
-
-### AI Service
-```
-python-ai/
-├── chains/
-│   ├── extractor.py
-│   ├── matcher.py
-│   └── advisor.py
-├── parsers/
-│   └── schemas.py
-├── utils/
-│   ├── pdf_reader.py
-│   └── vectorstore.py
-└── main.py
-```
-
----
-
-## API Endpoints
-
-### Auth
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/auth/register | Register new user |
-| POST | /api/auth/login | Login user |
-
-### Applications
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/applications | Get all applications |
-| POST | /api/applications | Create application |
-| PUT | /api/applications/:id | Update application |
-| DELETE | /api/applications/:id | Delete application |
-
-### AI Service
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /upload-resume | Upload resume PDF |
-| POST | /extract | Extract job description data |
-| POST | /match | Match resume with job |
-| POST | /advise | Get career advice |
-
----
-
-## How AI Works
-
-### 1. Job Description Extraction
-```
-User pastes job description
-        ↓
-LangChain PromptTemplate formats input
-        ↓
-Groq LLM (llama-3.1-8b-instant) processes
-        ↓
-Pydantic Output Parser validates JSON
-        ↓
-Returns: role, company, location, skills, experience, salary
-```
-
-### 2. Resume Matching (RAG Pipeline)
-```
-User uploads resume PDF
-        ↓
-PyPDFLoader reads text
-        ↓
-RecursiveCharacterTextSplitter splits into chunks
-        ↓
-HuggingFace Embeddings converts to vectors
-        ↓
-FAISS stores vectors locally
-        ↓
-Job description used to retrieve relevant chunks
-        ↓
-LLM compares resume chunks with JD
-        ↓
-Returns: matchScore, missingSkills, strengths, suggestion
-```
-
-### 3. Career Advice
-```
-Resume chunks + Job data
-        ↓
-LLM analyzes match
-        ↓
-Returns: shouldApply, reason, improvements, encouragement
-```
+python-ai/ → FastAPI AI Service
 
 ---
 
 ## Environment Variables
 
-### server/.env
-```
-PORT=5000
-MONGO_URI=
-JWT_SECRET=
-JWT_REFRESH_SECRET=
-```
+### Backend (.env)
 
-### python-ai/.env
-```
+PORT=5000
+
+MONGO_URI=
+
+JWT_SECRET=
+
+JWT_REFRESH_SECRET=
+
+### AI Service (.env)
+
 GROQ_API_KEY=
-```
+
+---
+
+## Local Development
+
+### Backend
+
+npm install
+
+npm run dev
+
+### Frontend
+
+npm install
+
+npm run dev
+
+### AI Service
+
+pip install -r requirements.txt
+
+uvicorn main:app --reload --port 8000
 
 ---
 
 ## Author
 
-**Saket Kumar**
-- GitHub: github.com/Saketku18
-- Email: saket123yadav@gmail.com
-- LinkedIn: linkedin.com/in/saket-kumar-8a571628b
+Saket Kumar
+
+GitHub: https://github.com/Saketku18
+
+LinkedIn: https://linkedin.com/in/saket-kumar-8a571628b
+
+Email: [saket123yadav@gmail.com](mailto:saket123yadav@gmail.com)
 
 ---
 
