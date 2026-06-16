@@ -52,7 +52,7 @@ def upload_resume(file: UploadFile = File(...)):
         return {"error": str(e)}
     
 
-    @app.post("/extract")
+@app.post("/extract")
 def extract(data: dict):
 
     import json
