@@ -52,15 +52,33 @@ def upload_resume(file: UploadFile = File(...)):
         return {"error": str(e)}
     
 
+from fastapi import Request
+
 @app.post("/extract")
-def extract(data: dict):
+async def extract(request: Request):
 
     import json
 
-    jd = data["text"]
+    try:
+        data = await request.json()
+
+        jd = (
+            data.get("text")
+            or data.get("job_description")
+            or ""
+        )
+
+    except:
+        jd = await request.body()
+        jd = jd.decode("utf-8")
+
+    if not jd.strip():
+        return {
+            "success": False,
+            "message": "Job description missing"
+        }
 
     jd = jd.replace("–", "-").replace("—", "-")
-    jd = jd.encode("ascii", "ignore").decode()
 
     job_data = extract_job(jd)
 
