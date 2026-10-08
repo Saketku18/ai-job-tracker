@@ -18,6 +18,31 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
+  refreshToken: {
+    type: String,
+    default: null,
+  },
+
+  resumeText: {
+    type: String,
+    default: "",
+  },
+
+  resumeFileName: {
+    type: String,
+    default: "",
+  },
+
+  lastJobData: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
+
+  lastJobDescription: {
+    type: String,
+    default: "",
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

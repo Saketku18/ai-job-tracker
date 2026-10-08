@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const applicationSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    index: true,
+  },
   company: {
     type: String,
     required: true,
@@ -8,6 +14,10 @@ const applicationSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true,
+  },
+  location: {
+    type: String,
+    default: "",
   },
   skills: [
     {

@@ -95,52 +95,60 @@ async def extract(request: Request):
 # ===============================
 @app.post("/match")
 def match():
-
     import json
+    import os
+    from fastapi.responses import JSONResponse
 
-    with open("resume.txt", "r", encoding="utf-8") as f:
-        resume_text = f.read()
+    if not os.path.exists("resume.txt"):
+        return JSONResponse(status_code=400, content={"error": "Resume not uploaded. Please upload a resume first."})
 
-    with open("job.json", "r") as f:
-        job_data = json.load(f)
+    if not os.path.exists("job.json"):
+        return JSONResponse(status_code=400, content={"error": "Job description not extracted. Please enter a job description first."})
 
-    if not resume_text:
-        return {"error": "Resume not uploaded"}
+    try:
+        with open("resume.txt", "r", encoding="utf-8") as f:
+            resume_text = f.read()
 
-    if not job_data:
-        return {"error": "Job not extracted"}
+        with open("job.json", "r", encoding="utf-8") as f:
+            job_data = json.load(f)
 
-    result = match_resume(
-        resume_text,
-        job_data
-    )
+        if not resume_text.strip():
+            return JSONResponse(status_code=400, content={"error": "Resume text is empty"})
 
-    return {"success": True, "data": result}
+        if not job_data:
+            return JSONResponse(status_code=400, content={"error": "Job data is empty"})
+
+        result = match_resume(resume_text, job_data)
+        return {"success": True, "data": result}
+    except Exception as e:
+        print("MATCH ERROR:", str(e))
+        return JSONResponse(status_code=500, content={"error": f"Match calculation failed: {str(e)}"})
+
 # ===============================
 # Advise
 # ===============================
 @app.post("/advise")
 def advise():
-
     import json
+    import os
+    from fastapi.responses import JSONResponse
 
-    with open("resume.txt", "r", encoding="utf-8") as f:
-        resume_text = f.read()
+    if not os.path.exists("resume.txt") or not os.path.exists("job.json"):
+        return JSONResponse(status_code=400, content={"error": "Missing resume or job description"})
 
-    with open("job.json", "r") as f:
-        job_data = json.load(f)
+    try:
+        with open("resume.txt", "r", encoding="utf-8") as f:
+            resume_text = f.read()
 
-    if not resume_text or not job_data:
-        return {"error": "Missing data"}
+        with open("job.json", "r", encoding="utf-8") as f:
+            job_data = json.load(f)
 
-    match_result = match_resume(
-        resume_text,
-        job_data
-    )
+        if not resume_text.strip() or not job_data:
+            return JSONResponse(status_code=400, content={"error": "Missing resume or job data"})
 
-    advice = get_advice(
-        match_result,
-        job_data
-    )
-
-    return {"success": True, "data": advice}
+        match_result = match_resume(resume_text, job_data)
+        advice = get_advice(match_result, job_data)
+        return {"success": True, "data": advice}
+    except Exception as e:
+        print("ADVISE ERROR:", str(e))
+        return JSONResponse(status_code=500, content={"error": f"Advice generation failed: {str(e)}"})
