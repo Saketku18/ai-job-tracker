@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { PDFParse } = require("pdf-parse");
+const pdf = require("pdf-parse");
 const User = require("../models/User");
 
 // Memory cache for session state (works across authenticated and unauthenticated sessions)
@@ -126,9 +126,8 @@ const uploadResume = async (req, res) => {
 
     let resumeText = "";
     try {
-      const parser = new PDFParse(new Uint8Array(req.file.buffer));
-      const parsed = await parser.getText();
-      resumeText = parsed?.text ? parsed.text.trim() : "";
+     const parsed = await pdf(req.file.buffer);
+     resumeText = parsed?.text ? parsed.text.trim() : "";
     } catch (parseErr) {
       console.error("PDF parsing error:", parseErr);
       return res.status(400).json({ message: "Could not read or extract text from this PDF file." });
